@@ -3,670 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vòng Quay May Mắn Professional</title>
+    <title>Vòng Quay May Mắn</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0284c7',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-            min-height: 100vh;
+            background-color: #0f172a;
             color: #f8fafc;
         }
-
-        /* Glassmorphism containers */
         .glass-panel {
             background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        /* Ticker pin wiggle animation */
-        @keyframes ticker-bounce {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(-22deg); }
-            75% { transform: rotate(8deg); }
-            100% { transform: rotate(0deg); }
-        }
-
-        .ticker-active {
-            animation: ticker-bounce 0.12s ease-in-out;
-            transform-origin: 50% 15%;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.6);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(100, 116, 139, 0.5);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(148, 163, 184, 0.8);
-        }
-
-        /* Modal backdrop transition */
-        .modal-enter {
-            opacity: 0;
-            transform: scale(0.95);
-        }
-        .modal-enter-active {
-            opacity: 1;
-            transform: scale(1);
-            transition: opacity 300ms ease-out, transform 300ms ease-out;
+        .pointer-shadow {
+            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.5));
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen text-slate-100 overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+<body class="min-h-screen flex flex-col justify-between p-4 md:p-8">
 
-    <header class="w-full glass-panel sticky top-0 z-30 border-b border-slate-700/50 px-4 py-3 sm:px-8">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                    <i class="fa-solid font-bold fa-dharmachakra text-white text-xl animate-spin-slow"></i>
-                </div>
-                <div>
-                    <h1 class="font-extrabold text-lg sm:text-xl bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-indigo-300">
-                        Vòng Quay May Mắn
-                    </h1>
-                    <p class="text-xs text-slate-400 hidden sm:block">Quyết định ngẫu nhiên & Trúng thưởng trực quan</p>
-                </div>
+    <!-- Header -->
+    <header class="max-w-6xl mx-auto w-full flex justify-between items-center mb-6">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-pink-500 flex items-center justify-center text-xl shadow-lg">
+                🎡
             </div>
-
-            <div class="flex items-center gap-2">
-                <button id="soundToggleBtn" onclick="toggleSound()" class="px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white border border-slate-700/60 transition-all flex items-center gap-2 text-sm font-medium">
-                    <i id="soundIcon" class="fa-solid fa-volume-high text-indigo-400"></i>
-                    <span id="soundLabel" class="hidden md:inline">Âm thanh</span>
-                </button>
-                <button onclick="openBulkModal()" class="px-3.5 py-2 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-500/30 transition-all text-sm font-medium flex items-center gap-2">
-                    <i class="fa-solid fa-list-check"></i>
-                    <span class="hidden md:inline">Nhập nhanh</span>
-                </button>
+            <div>
+                <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">Vòng Quay May Mắn</h1>
+                <p class="text-xs text-slate-400">Quyết định ngẫu nhiên & Trúng thưởng trực quan</p>
             </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button id="soundToggleBtn" onclick="toggleSound()" class="px-4 py-2 rounded-lg glass-panel hover:bg-slate-700/50 transition text-xs font-semibold flex items-center gap-2">
+                <span id="soundIcon">🔊</span> <span id="soundText">Âm thanh</span>
+            </button>
+            <button onclick="openBulkModal()" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition text-xs font-semibold shadow-lg">
+                📑 Nhập nhanh
+            </button>
         </div>
     </header>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        <!-- LEFT COLUMN: Canvas Wheel Display -->
-        <section class="lg:col-span-7 flex flex-col items-center justify-center glass-panel rounded-3xl p-4 sm:p-8 relative shadow-2xl overflow-hidden min-h-[480px]">
-            
-            <!-- Ambient Glow Effect behind wheel -->
-            <div class="absolute -z-10 w-72 h-72 sm:w-96 sm:h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -z-10 w-48 h-48 bg-pink-600/15 rounded-full blur-2xl -bottom-10 -right-10 pointer-events-none"></div>
-
-            <!-- Ticker Pointer Pin (Góc 12 giờ) -->
-            <div class="relative w-full max-w-[460px] aspect-square flex items-center justify-center my-auto">
-                <div id="pointerPin" class="absolute -top-3 z-20 w-8 h-12 flex justify-center items-start transition-transform origin-top">
-                    <!-- SVG Pointer Pin with gradient & shadow -->
-                    <svg width="32" height="42" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg" class="filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]">
-                        <path d="M16 42L0 12C0 5.37258 7.16344 0 16 0C24.8366 0 32 5.37258 32 12L16 42Z" fill="url(#pinGradient)"/>
-                        <circle cx="16" cy="12" r="5" fill="#FFFFFF"/>
-                        <defs>
-                            <linearGradient id="pinGradient" x1="16" y1="0" x2="16" y2="42" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#FF4B4B"/>
-                                <stop offset="1" stop-color="#DC2626"/>
-                            </linearGradient>
-                        </defs>
+        <!-- Left Column: Wheel Canvas -->
+        <div class="lg:col-span-7 flex flex-col items-center justify-center glass-panel p-6 rounded-3xl relative overflow-hidden">
+            <div class="relative flex items-center justify-center my-4">
+                <!-- Pointer -->
+                <div class="absolute -top-3 z-20 pointer-shadow">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="#ef4444" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" transform="rotate(180 12 12)"/>
                     </svg>
                 </div>
+                
+                <!-- Canvas Wheel -->
+                <canvas id="wheelCanvas" width="800" height="800" class="w-[320px] h-[320px] sm:w-[440px] sm:h-[440px] max-w-full aspect-square"></canvas>
 
-                <!-- Canvas Component -->
-                <canvas id="wheelCanvas" class="w-full h-full cursor-pointer touch-none filter drop-shadow-2xl"></canvas>
-
-                <!-- Center Spin Button Overlay -->
-                <button id="centerSpinBtn" onclick="spinWheel()" class="absolute z-20 w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-amber-300 via-amber-400 to-amber-600 border-4 border-amber-100 shadow-[0_0_25px_rgba(245,158,11,0.6)] flex flex-col items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 group focus:outline-none">
-                    <span class="text-xs sm:text-sm font-black text-slate-950 uppercase tracking-wider group-hover:text-black">QUAY</span>
-                    <i class="fa-solid fa-play text-slate-900 text-xs mt-0.5 group-hover:translate-x-0.5 transition-transform"></i>
+                <!-- Center Spin Button -->
+                <button onclick="spinWheel()" id="centerSpinBtn" class="absolute z-10 w-20 h-20 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-900 font-extrabold text-sm uppercase tracking-wider flex flex-col items-center justify-center shadow-2xl transition transform active:scale-95 border-4 border-slate-900">
+                    <span>QUAY</span>
+                    <span class="text-[10px]">►</span>
                 </button>
             </div>
 
-            <!-- Quick Action controls underneath Wheel -->
-            <div class="mt-6 flex flex-wrap items-center justify-center gap-3 w-full max-w-md">
-                <button onclick="spinWheel()" id="spinBtnBottom" class="flex-1 py-3 px-6 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600 text-white font-bold text-base shadow-lg shadow-indigo-500/25 transition-all hover:shadow-indigo-500/40 active:scale-98 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-rotate-right text-lg"></i>
-                    Bắt đầu quay
-                </button>
-            </div>
-        </section>
+            <button onclick="spinWheel()" id="mainSpinBtn" class="w-full mt-4 py-3.5 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 font-bold text-lg hover:opacity-90 transition shadow-lg flex items-center justify-center gap-2">
+                <span>🔄 Bắt đầu quay</span>
+            </button>
+        </div>
 
-        <!-- RIGHT COLUMN: Control Panel & Options Management -->
-        <section class="lg:col-span-5 flex flex-col gap-6">
+        <!-- Right Column: Settings & History -->
+        <div class="lg:col-span-5 flex flex-col gap-6">
             
-            <div class="glass-panel rounded-3xl p-5 sm:p-6 shadow-xl border border-slate-700/60">
-                <div class="flex items-center justify-between pb-4 border-b border-slate-700/50 mb-4">
-                    <div class="flex items-center gap-2.5">
-                        <i class="fa-solid fa-sliders text-indigo-400 text-lg"></i>
-                        <h2 class="font-bold text-base sm:text-lg text-white">Danh sách lựa chọn</h2>
-                        <span id="itemCountBadge" class="ml-1 px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold border border-indigo-500/30">0</span>
-                    </div>
-
-                    <div class="flex items-center gap-1.5">
-                        <button onclick="shuffleItems()" title="Xáo trộn danh sách" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all text-xs">
-                            <i class="fa-solid fa-shuffle"></i>
-                        </button>
-                        <button onclick="resetDefaultItems()" title="Đặt lại mặc định" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all text-xs">
-                            <i class="fa-solid fa-arrow-rotate-left"></i>
-                        </button>
-                        <button onclick="clearAllItems()" title="Xóa tất cả" class="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all text-xs">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
+            <!-- Items Manager -->
+            <div class="glass-panel p-5 rounded-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-bold flex items-center gap-2 text-slate-200">
+                        <span>⚙️ Danh sách lựa chọn</span>
+                        <span id="itemCountBadge" class="bg-indigo-500/20 text-indigo-300 text-xs px-2 py-0.5 rounded-full font-mono">0</span>
+                    </h2>
+                    <div class="flex items-center gap-1">
+                        <button onclick="shuffleItems()" title="Trộn danh sách" class="p-1.5 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white transition text-sm">🔀</button>
+                        <button onclick="resetToDefault()" title="Khôi phục mặc định" class="p-1.5 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white transition text-sm">🔄</button>
+                        <button onclick="clearAllItems()" title="Xóa tất cả" class="p-1.5 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-red-400 transition text-sm">🗑️</button>
                     </div>
                 </div>
 
-                <!-- Add item input form -->
-                <form onsubmit="handleAddItem(event)" class="flex gap-2 mb-4">
-                    <input type="text" id="newItemInput" placeholder="Nhập mục mới..." class="flex-1 bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
-                    <button type="submit" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-semibold rounded-xl text-sm transition-all flex items-center gap-1.5 shrink-0">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Thêm</span>
+                <!-- Add Input -->
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="newItemInput" placeholder="Nhập mục mới..." onkeyup="handleKeyPress(event)" class="flex-1 bg-slate-900/60 border border-slate-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    <button onclick="addItem()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">
+                        + Thêm
                     </button>
-                </form>
-
-                <!-- Scrollable Item List -->
-                <div id="itemsContainer" class="max-h-[280px] overflow-y-auto pr-1 flex flex-col gap-2">
-                    <!-- Dynamic rendering via JS -->
                 </div>
 
-                <!-- Wheel Config Options -->
-                <div class="mt-5 pt-4 border-t border-slate-700/50 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                    <label class="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/40 border border-slate-700/40 cursor-pointer hover:bg-slate-800/70 transition-all">
-                        <span class="text-slate-300">Tự xóa mục đã trúng</span>
-                        <input type="checkbox" id="autoRemoveWinner" class="w-4 h-4 rounded text-indigo-600 bg-slate-900 border-slate-700 focus:ring-indigo-500 focus:ring-offset-slate-900">
+                <!-- Controls -->
+                <div class="grid grid-cols-2 gap-3 mb-4 text-xs">
+                    <label class="flex items-center gap-2 bg-slate-900/40 p-2.5 rounded-xl cursor-pointer hover:bg-slate-900/60 transition">
+                        <input type="checkbox" id="removeOnWin" class="rounded border-slate-700 text-indigo-600 focus:ring-0">
+                        <span>Tự xóa mục đã trúng</span>
                     </label>
-
-                    <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/40 border border-slate-700/40">
-                        <span class="text-slate-300">Thời gian quay</span>
-                        <select id="spinDurationSelect" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-indigo-300 focus:outline-none focus:border-indigo-500">
-                            <option value="3">3 giây</option>
-                            <option value="5" selected>5 giây</option>
-                            <option value="8">8 giây</option>
-                            <option value="10">10 giây</option>
+                    <div class="flex items-center justify-between bg-slate-900/40 p-2.5 rounded-xl">
+                        <span>Thời gian quay</span>
+                        <select id="spinDuration" class="bg-transparent font-semibold focus:outline-none text-right cursor-pointer">
+                            <option value="3" class="bg-slate-800">3 giây</option>
+                            <option value="5" selected class="bg-slate-800">5 giây</option>
+                            <option value="8" class="bg-slate-800">8 giây</option>
                         </select>
                     </div>
                 </div>
-            </div>
 
-            <div class="glass-panel rounded-3xl p-5 sm:p-6 shadow-xl border border-slate-700/60">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-clock-rotate-left text-indigo-400"></i>
-                        <h3 class="font-bold text-sm sm:text-base text-white">Lịch sử trúng thưởng</h3>
-                    </div>
-                    <button onclick="clearHistory()" class="text-xs text-slate-400 hover:text-slate-200 transition-colors">Xóa lịch sử</button>
-                </div>
-                <div id="historyContainer" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-                    <span class="text-xs text-slate-500 italic">Chưa có lượt quay nào.</span>
+                <!-- Items List -->
+                <div id="itemsContainer" class="max-h-56 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                    <!-- Dynamic items will be inserted here -->
                 </div>
             </div>
 
-        </section>
+            <!-- Winner History -->
+            <div class="glass-panel p-5 rounded-2xl">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="font-bold flex items-center gap-2 text-slate-200">
+                        <span>📑 Lịch sử trúng thưởng</span>
+                    </h2>
+                    <button onclick="clearHistory()" class="text-xs text-slate-400 hover:text-red-400 transition">Xóa lịch sử</button>
+                </div>
+                <div id="historyContainer" class="max-h-36 overflow-y-auto space-y-1.5 text-sm pr-1">
+                    <p class="text-xs text-slate-500 italic">Chưa có lượt quay nào.</p>
+                </div>
+            </div>
+
+        </div>
     </main>
 
-    <!-- WINNER MODAL -->
-    <div id="winnerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden transition-opacity duration-300 opacity-0">
-        <div class="glass-panel max-w-md w-full rounded-3xl p-6 sm:p-8 text-center relative border border-slate-700 shadow-2xl transform transition-transform duration-300 scale-95" id="winnerModalContent">
-            
-            <div class="w-20 h-20 mx-auto -mt-12 mb-4 rounded-full bg-gradient-to-tr from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30 border-4 border-slate-900">
-                <i class="fa-solid fa-trophy text-slate-950 text-3xl"></i>
-            </div>
+    <!-- Winner Modal -->
+    <div id="winnerModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-panel bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-sm w-full text-center relative transform scale-90 transition-transform duration-300" id="winnerModalContent">
+            <div class="text-5xl mb-3">🎉</div>
+            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-1">Kết quả trúng thưởng</h3>
+            <div id="winnerResultText" class="text-2xl font-black text-amber-400 my-4 break-words">---</div>
+            <button onclick="closeWinnerModal()" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-sm transition">
+                Xác nhận
+            </button>
+        </div>
+    </div>
 
-            <h3 class="text-xs font-extrabold uppercase tracking-widest text-amber-400 mb-1">KẾT QUẢ QUAY</h3>
-            <div id="winnerResultText" class="text-2xl sm:text-3xl font-black text-white my-3 break-words px-2">---</div>
-            <p class="text-slate-400 text-xs sm:text-sm mb-6">Xin chúc mừng lựa chọn ngẫu nhiên đã được chọn!</p>
-
-            <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <button onclick="closeWinnerModal(false)" class="flex-1 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition-all border border-slate-700">
-                    Quay tiếp
-                </button>
-                <button id="removeWinnerBtn" onclick="closeWinnerModal(true)" class="flex-1 py-3 px-4 rounded-xl bg-red-600/80 hover:bg-red-500 text-white font-semibold text-sm transition-all shadow-lg shadow-red-600/20">
-                    Xóa mục này
-                </button>
+    <!-- Bulk Input Modal -->
+    <div id="bulkModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="glass-panel bg-slate-900 border border-slate-700 p-6 rounded-3xl max-w-md w-full m-4">
+            <h3 class="text-lg font-bold mb-2">Nhập nhanh danh sách</h3>
+            <p class="text-xs text-slate-400 mb-3">Nhập các lựa chọn, mỗi mục nằm trên một dòng riêng biệt:</p>
+            <textarea id="bulkInputText" rows="8" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-500 mb-4 font-sans"></textarea>
+            <div class="flex justify-end gap-2">
+                <button onclick="closeBulkModal()" class="px-4 py-2 rounded-xl text-xs font-semibold hover:bg-slate-800 transition">Hủy</button>
+                <button onclick="saveBulkItems()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold transition">Lưu danh sách</button>
             </div>
         </div>
     </div>
 
-    <!-- BULK INPUT MODAL -->
-    <div id="bulkModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden transition-opacity duration-300 opacity-0">
-        <div class="glass-panel max-w-lg w-full rounded-3xl p-6 relative border border-slate-700 shadow-2xl">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-4">
-                <h3 class="font-bold text-lg text-white flex items-center gap-2">
-                    <i class="fa-solid fa-list-ul text-indigo-400"></i>
-                    Nhập nhanh danh sách
-                </h3>
-                <button onclick="closeBulkModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-
-            <p class="text-xs text-slate-400 mb-2">Nhập mỗi lựa chọn trên một dòng hoặc phân cách bằng dấu phẩy (,):</p>
-            <textarea id="bulkTextarea" rows="8" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 mb-4 placeholder-slate-600" placeholder="Giải nhất&#10;Giải nhì&#10;Giải ba&#10;May mắn lần sau"></textarea>
-
-            <div class="flex justify-end gap-3">
-                <button onclick="closeBulkModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-sm font-medium">Hủy</button>
-                <button onclick="applyBulkInput()" class="px-5 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-500 text-sm font-semibold shadow-lg shadow-indigo-600/30">Áp dụng</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- Web Audio & Logic JavaScript -->
     <script>
-        /* Modern Color Palette for Wheel Sectors */
-        const COLOR_PALETTE = [
-            '#EF4444', '#F97316', '#F59E0B', '#10B981', 
-            '#06B6D4', '#3B82F6', '#6366F1', '#8B5CF6', 
-            '#EC4899', '#14B8A6', '#84CC16', '#EAB308'
-        ];
-
+        // Danh sách mặc định ban đầu
         const DEFAULT_ITEMS = [
-            'C.Liên Giàu 369k 🏆', 'C.Liên Nghèo 239k 🥈', 'A.Sỹ  Nghèo 239k 🥉', 
-            'A.Sỹ  Giàu 239k 👕', 'Linh Giàu 369k 🔑', 'Linh Nghèo 369k 🎟️', 
-            'Phương Giàu 369k 🍀', 'Phương Nghèo 239k ☕', 'Đông Nghèo 239k 🐁','Đông Giàu 369k 🐀'
+            'C.Liên Giàu 369k 🏆', 'C.Liên Nghèo 239k 🥈', 'A.Sỹ Nghèo 239k 🥉', 
+            'A.Sỹ Giàu 239k 👕', 'Linh Giàu 369k 🔑', 'Linh Nghèo 369k 🎟️', 
+            'Phương Giàu 369k 🍀', 'Phương Nghèo 239k ☕', 'Đông Nghèo 239k 🐁', 'Đông Giàu 369k 🐀'
         ];
 
-        // App State Variables
+        const PALETTE = [
+            '#ef4444', '#f97316', '#f59e0b', '#10b981', 
+            '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#ec4899'
+        ];
+
         let items = [];
-        let spinHistory = [];
+        let history = [];
         let soundEnabled = true;
+
+        // Canvas Variable
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+        let currentAngle = 0;
         let isSpinning = false;
+
+        // Sound System (Web Audio API)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
-        // Wheel Rotation Physics
-        let currentRotation = 0; // In radians
-        let spinVelocity = 0;
-        let deceleration = 0;
-        let targetRotation = 0;
-        let animationFrameId = null;
-        let lastSectorIndex = -1;
-
-        // Web Audio Synthesizer Context
-        let audioCtx = null;
-
-        // Init App on Page Load
-        window.addEventListener('DOMContentLoaded', () => {
-            loadItemsFromLocalStorage();
-            setupCanvasResolution();
-            drawWheel();
-            renderItemList();
-
-            window.addEventListener('resize', () => {
-                setupCanvasResolution();
-                drawWheel();
-            });
-        });
-
-        function initAudioContext() {
-            if (!audioCtx) {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                audioCtx = new AudioContext();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        }
-
-        // Play Ticking Sound (Per sector crossing)
         function playTickSound() {
             if (!soundEnabled) return;
             try {
-                initAudioContext();
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.04);
-
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.05);
                 gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
-
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-
                 osc.start();
-                osc.stop(audioCtx.currentTime + 0.04);
-            } catch (e) {
-                console.warn('Audio play failed', e);
-            }
+                osc.stop(audioCtx.currentTime + 0.05);
+            } catch (e) {}
         }
 
-        // Play Fanfare Sound (On Winning)
         function playWinSound() {
             if (!soundEnabled) return;
             try {
-                initAudioContext();
-                const notes = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5
-                notes.forEach((freq, index) => {
+                const notes = [261.63, 329.63, 392.00, 523.25];
+                notes.forEach((freq, idx) => {
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
-
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime + index * 0.1);
-
-                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime + index * 0.1);
-                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + index * 0.1 + 0.4);
-
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime + idx * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.1 + 0.3);
                     osc.connect(gain);
                     gain.connect(audioCtx.destination);
-
-                    osc.start(audioCtx.currentTime + index * 0.1);
-                    osc.stop(audioCtx.currentTime + index * 0.1 + 0.4);
+                    osc.start(audioCtx.currentTime + idx * 0.1);
+                    osc.stop(audioCtx.currentTime + idx * 0.1 + 0.3);
                 });
-            } catch (e) {
-                console.warn('Audio win sound failed', e);
-            }
+            } catch (e) {}
         }
 
         function toggleSound() {
             soundEnabled = !soundEnabled;
-            const icon = document.getElementById('soundIcon');
-            const label = document.getElementById('soundLabel');
-            if (soundEnabled) {
-                icon.className = 'fa-solid fa-volume-high text-indigo-400';
-                label.textContent = 'Âm thanh';
-            } else {
-                icon.className = 'fa-solid fa-volume-xmark text-slate-500';
-                label.textContent = 'Tắt âm';
+            document.getElementById('soundIcon').innerText = soundEnabled ? '🔊' : '🔇';
+            document.getElementById('soundText').innerText = soundEnabled ? 'Âm thanh' : 'Tắt tiếng';
+        }
+
+        // Tải dữ liệu từ LocalStorage hoặc khôi phục mặc định nếu rỗng
+        function loadItems() {
+            let saved = null;
+            try {
+                saved = JSON.parse(localStorage.getItem('wheel_items'));
+            } catch (e) {}
+
+            if (!saved || !Array.isArray(saved) || saved.length === 0) {
+                saveItems(DEFAULT_ITEMS);
+                return [...DEFAULT_ITEMS];
             }
+            return saved;
         }
 
-        const canvas = document.getElementById('wheelCanvas');
-        const ctx = canvas.getContext('2d');
-
-        function setupCanvasResolution() {
-            const container = canvas.parentElement;
-            const size = Math.min(container.clientWidth, 460);
-            const dpr = window.devicePixelRatio || 1;
-
-            canvas.width = size * dpr;
-            canvas.height = size * dpr;
-            canvas.style.width = `${size}px`;
-            canvas.style.height = `${size}px`;
-
-            ctx.scale(dpr, dpr);
-        }
-
-        function drawWheel() {
-            const size = canvas.width / (window.devicePixelRatio || 1);
-            const center = size / 2;
-            const radius = center - 12;
-
-            ctx.clearRect(0, 0, size, size);
-
-            if (items.length === 0) {
-                // Empty Wheel State
-                ctx.beginPath();
-                ctx.arc(center, center, radius, 0, Math.PI * 2);
-                ctx.fillStyle = '#1e293b';
-                ctx.fill();
-                ctx.strokeStyle = '#334155';
-                ctx.lineWidth = 4;
-                ctx.stroke();
-
-                ctx.fillStyle = '#64748b';
-                ctx.font = 'bold 16px "Plus Jakarta Sans"';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('Hãy thêm danh sách ô quay', center, center);
-                return;
-            }
-
-            const sliceAngle = (Math.PI * 2) / items.length;
-
-            ctx.save();
-            ctx.translate(center, center);
-            ctx.rotate(currentRotation);
-
-            // Draw Wheel Sectors
-            for (let i = 0; i < items.length; i++) {
-                const angleStart = i * sliceAngle;
-                const angleEnd = angleStart + sliceAngle;
-
-                // Sector wedge
-                ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.arc(0, 0, radius, angleStart, angleEnd);
-                ctx.closePath();
-
-                ctx.fillStyle = items[i].color || COLOR_PALETTE[i % COLOR_PALETTE.length];
-                ctx.fill();
-
-                // Inner divider border
-                ctx.strokeStyle = 'rgba(15, 23, 42, 0.4)';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                // Draw Text
-                ctx.save();
-                ctx.rotate(angleStart + sliceAngle / 2);
-                ctx.textAlign = 'right';
-                ctx.textBaseline = 'middle';
-                ctx.fillStyle = '#FFFFFF';
-                
-                // Adaptive font sizing based on slice count
-                const fontSize = items.length > 20 ? 10 : items.length > 12 ? 12 : 14;
-                ctx.font = `700 ${fontSize}px "Plus Jakarta Sans"`;
-                
-                // Truncate text if too long
-                let text = items[i].text;
-                const maxTextWidth = radius - 45;
-                if (ctx.measureText(text).width > maxTextWidth) {
-                    while (ctx.measureText(text + '...').width > maxTextWidth && text.length > 0) {
-                        text = text.slice(0, -1);
-                    }
-                    text += '...';
-                }
-
-                // Add subtle shadow to text for contrast
-                ctx.shadowColor = 'rgba(0,0,0,0.5)';
-                ctx.shadowBlur = 3;
-                ctx.fillText(text, radius - 20, 0);
-                ctx.restore();
-            }
-
-            // Outer Metallic Edge Ring
-            ctx.beginPath();
-            ctx.arc(0, 0, radius, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-            ctx.lineWidth = 6;
-            ctx.stroke();
-
-            ctx.restore();
-        }
-
-        function spinWheel() {
-            if (isSpinning) return;
-            if (items.length < 1) {
-                alert('Vui lòng thêm ít nhất 1 lựa chọn!');
-                return;
-            }
-
-            initAudioContext();
-            isSpinning = true;
-            document.getElementById('centerSpinBtn').disabled = true;
-            document.getElementById('spinBtnBottom').disabled = true;
-
-            const durationSec = parseFloat(document.getElementById('spinDurationSelect').value) || 5;
-            const fullRounds = 5 + Math.floor(Math.random() * 5); // 5 to 10 full spins
-            const randomOffsetAngle = Math.random() * Math.PI * 2;
-            
-            const totalRotationDistance = (fullRounds * Math.PI * 2) + randomOffsetAngle;
-            
-            const startTime = performance.now();
-            const startRotation = currentRotation;
-
-            // Ease Out Cubic physics formula
-            function animateSpin(currentTime) {
-                const elapsed = (currentTime - startTime) / 1000;
-                const progress = Math.min(elapsed / durationSec, 1);
-                
-                // Easing curve: Ease-Out-Cubic
-                const easeOut = 1 - Math.pow(1 - progress, 3);
-                
-                currentRotation = startRotation + totalRotationDistance * easeOut;
-                drawWheel();
-                checkTickerPass();
-
-                if (progress < 1) {
-                    animationFrameId = requestAnimationFrame(animateSpin);
-                } else {
-                    // Spin Completed
-                    isSpinning = false;
-                    document.getElementById('centerSpinBtn').disabled = false;
-                    document.getElementById('spinBtnBottom').disabled = false;
-                    onSpinComplete();
-                }
-            }
-
-            requestAnimationFrame(animateSpin);
-        }
-
-        // Check if pointer passes a sector border to trigger sound & ticker bump
-        function checkTickerPass() {
-            if (items.length === 0) return;
-            
-            const sliceAngle = (Math.PI * 2) / items.length;
-            // Pointer is at 12 o'clock (-Math.PI/2 relative to standard 0 degree horizontal right)
-            const normalizedAngle = ((Math.PI * 1.5 - (currentRotation % (Math.PI * 2))) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
-            const currentSector = Math.floor(normalizedAngle / sliceAngle);
-
-            if (currentSector !== lastSectorIndex) {
-                lastSectorIndex = currentSector;
-                playTickSound();
-                
-                // Ticker pin bump effect
-                const pin = document.getElementById('pointerPin');
-                pin.classList.remove('ticker-active');
-                void pin.offsetWidth; // Trigger reflow
-                pin.classList.add('ticker-active');
-            }
-        }
-
-        function getWinningItem() {
-            const sliceAngle = (Math.PI * 2) / items.length;
-            const normalizedAngle = ((Math.PI * 1.5 - (currentRotation % (Math.PI * 2))) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
-            const winningIndex = Math.floor(normalizedAngle / sliceAngle);
-            return { item: items[winningIndex], index: winningIndex };
-        }
-
-        function onSpinComplete() {
-            const winner = getWinningItem();
-            playWinSound();
-            triggerConfetti();
-
-            // Add to spin history
-            spinHistory.unshift({
-                text: winner.item.text,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-            });
-            renderHistory();
-
-            // Open Modal
-            document.getElementById('winnerResultText').textContent = winner.item.text;
-            showWinnerModal(winner.index);
-        }
-
-        function triggerConfetti() {
-            if (typeof confetti === 'function') {
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 },
-                    colors: ['#6366F1', '#EC4899', '#10B981', '#F59E0B']
-                });
-            }
-        }
-
-        function renderItemList() {
-            const container = document.getElementById('itemsContainer');
-            const badge = document.getElementById('itemCountBadge');
-            container.innerHTML = '';
-            badge.textContent = items.length;
-
-            items.forEach((item, index) => {
-                const row = document.createElement('div');
-                row.className = 'flex items-center gap-2 p-2 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition-all';
-
-                row.innerHTML = `
-                    <input type="color" value="${item.color}" onchange="updateItemColor(${index}, this.value)" class="w-6 h-6 rounded border-0 bg-transparent cursor-pointer shrink-0">
-                    <input type="text" value="${escapeHtml(item.text)}" onchange="updateItemText(${index}, this.value)" class="flex-1 bg-transparent text-sm text-slate-200 border-b border-transparent focus:border-indigo-500 focus:outline-none px-1">
-                    <button onclick="removeItem(${index})" class="p-1.5 text-slate-500 hover:text-red-400 transition-colors shrink-0">
-                        <i class="fa-solid fa-xmark text-sm"></i>
-                    </button>
-                `;
-                container.appendChild(row);
-            });
-
-            saveItemsToLocalStorage();
-        }
-
-        function handleAddItem(e) {
-            e.preventDefault();
-            const input = document.getElementById('newItemInput');
-            const text = input.value.trim();
-            if (text) {
-                const color = COLOR_PALETTE[items.length % COLOR_PALETTE.length];
-                items.push({ text, color });
-                input.value = '';
-                renderItemList();
-                drawWheel();
-            }
-        }
-
-        function updateItemText(index, value) {
-            if (value.trim()) {
-                items[index].text = value.trim();
-            } else {
-                items.splice(index, 1);
-                renderItemList();
-            }
-            drawWheel();
-            saveItemsToLocalStorage();
-        }
-
-        function updateItemColor(index, color) {
-            items[index].color = color;
-            drawWheel();
-            saveItemsToLocalStorage();
-        }
-
-        function removeItem(index) {
-            items.splice(index, 1);
+        function saveItems(newItems) {
+            items = newItems;
+            localStorage.setItem('wheel_items', JSON.stringify(items));
             renderItemList();
             drawWheel();
         }
 
-        function clearAllItems() {
-            if (confirm('Bạn có chắc chắn muốn xóa tất cả các lựa chọn?')) {
-                items = [];
-                renderItemList();
-                drawWheel();
+        function resetToDefault() {
+            saveItems([...DEFAULT_ITEMS]);
+        }
+
+        function renderItemList() {
+            const container = document.getElementById('itemsContainer');
+            document.getElementById('itemCountBadge').innerText = items.length;
+            container.innerHTML = '';
+
+            items.forEach((item, index) => {
+                const color = PALETTE[index % PALETTE.length];
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between bg-slate-900/60 border border-slate-800 rounded-xl p-2.5 hover:border-slate-700 transition group';
+                div.innerHTML = `
+                    <div class="flex items-center gap-2.5 overflow-hidden">
+                        <span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: ${color}"></span>
+                        <span class="text-sm font-medium truncate">${item}</span>
+                    </div>
+                    <button onclick="removeItem(${index})" class="text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition px-2">✕</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addItem() {
+            const input = document.getElementById('newItemInput');
+            const val = input.value.trim();
+            if (val) {
+                items.push(val);
+                saveItems(items);
+                input.value = '';
             }
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') addItem();
+        }
+
+        function removeItem(index) {
+            items.splice(index, 1);
+            saveItems(items);
+        }
+
+        function clearAllItems() {
+            saveItems([]);
         }
 
         function shuffleItems() {
@@ -674,118 +304,193 @@
                 const j = Math.floor(Math.random() * (i + 1));
                 [items[i], items[j]] = [items[j], items[i]];
             }
-            renderItemList();
-            drawWheel();
+            saveItems(items);
         }
 
-        function resetDefaultItems() {
-            items = DEFAULT_ITEMS.map((text, i) => ({
-                text,
-                color: COLOR_PALETTE[i % COLOR_PALETTE.length]
-            }));
-            renderItemList();
-            drawWheel();
+        // Canvas Wheel Drawing
+        function drawWheel() {
+            const numSegments = items.length;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = centerX - 20;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (numSegments === 0) {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = '#1e293b';
+                ctx.fill();
+                ctx.fillStyle = '#64748b';
+                ctx.font = 'bold 28px "Plus Jakarta Sans"';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Hãy thêm ô vào danh sách', centerX, centerY);
+                return;
+            }
+
+            const arcSize = (2 * Math.PI) / numSegments;
+
+            for (let i = 0; i < numSegments; i++) {
+                const angle = currentAngle + i * arcSize;
+                
+                // Draw Sector
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, angle, angle + arcSize);
+                ctx.fillStyle = PALETTE[i % PALETTE.length];
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#0f172a';
+                ctx.stroke();
+
+                // Draw Text
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(angle + arcSize / 2);
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 26px "Plus Jakarta Sans"';
+                
+                let text = items[i];
+                if (text.length > 18) text = text.substring(0, 15) + '...';
+                ctx.fillText(text, radius - 30, 10);
+                ctx.restore();
+            }
         }
 
-        let currentWinnerIndex = null;
+        // Spin Logic
+        function spinWheel() {
+            if (isSpinning || items.length === 0) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
 
-        function showWinnerModal(index) {
-            currentWinnerIndex = index;
+            isSpinning = true;
+            document.getElementById('mainSpinBtn').disabled = true;
+            document.getElementById('centerSpinBtn').disabled = true;
+
+            const duration = parseInt(document.getElementById('spinDuration').value) * 1000;
+            const extraSpins = 5 + Math.floor(Math.random() * 5);
+            const targetAngle = currentAngle + (extraSpins * 2 * Math.PI) + Math.random() * 2 * Math.PI;
+
+            const startAngle = currentAngle;
+            const startTime = performance.now();
+            let lastSegmentIndex = -1;
+
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Cubic ease-out
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                currentAngle = startAngle + (targetAngle - startAngle) * easeOut;
+
+                // Tick Sound Check
+                const arcSize = (2 * Math.PI) / items.length;
+                const normalizedAngle = (3 * Math.PI / 2 - currentAngle) % (2 * Math.PI);
+                const positiveAngle = normalizedAngle < 0 ? normalizedAngle + 2 * Math.PI : normalizedAngle;
+                const currentSegment = Math.floor(positiveAngle / arcSize);
+
+                if (currentSegment !== lastSegmentIndex) {
+                    playTickSound();
+                    lastSegmentIndex = currentSegment;
+                }
+
+                drawWheel();
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    isSpinning = false;
+                    document.getElementById('mainSpinBtn').disabled = false;
+                    document.getElementById('centerSpinBtn').disabled = false;
+                    
+                    const winningIndex = (items.length - Math.floor((positiveAngle / (2 * Math.PI)) * items.length)) % items.length;
+                    const winner = items[winningIndex];
+                    
+                    handleWin(winner, winningIndex);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        function handleWin(winner, index) {
+            playWinSound();
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+
+            // Update Winner History
+            history.unshift(winner);
+            renderHistory();
+
+            // Open Modal
+            document.getElementById('winnerResultText').innerText = winner;
             const modal = document.getElementById('winnerModal');
             const content = document.getElementById('winnerModalContent');
-            
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
-                content.classList.remove('scale-95');
+                content.classList.remove('scale-90');
             }, 10);
+
+            // Auto Remove Option
+            if (document.getElementById('removeOnWin').checked) {
+                items.splice(index, 1);
+                saveItems(items);
+            }
         }
 
-        function closeWinnerModal(removeWinner = false) {
-            const autoRemove = document.getElementById('autoRemoveWinner').checked;
-            
-            if ((removeWinner || autoRemove) && currentWinnerIndex !== null && items[currentWinnerIndex]) {
-                items.splice(currentWinnerIndex, 1);
-                renderItemList();
-                drawWheel();
-            }
-
+        function closeWinnerModal() {
             const modal = document.getElementById('winnerModal');
             const content = document.getElementById('winnerModalContent');
-
             modal.classList.add('opacity-0');
-            content.classList.add('scale-95');
+            content.classList.add('scale-90');
             setTimeout(() => {
                 modal.classList.add('hidden');
             }, 300);
         }
 
-        function openBulkModal() {
-            const modal = document.getElementById('bulkModal');
-            document.getElementById('bulkTextarea').value = items.map(i => i.text).join('\n');
-            modal.classList.remove('hidden');
-            setTimeout(() => modal.classList.remove('opacity-0'), 10);
-        }
-
-        function closeBulkModal() {
-            const modal = document.getElementById('bulkModal');
-            modal.classList.add('opacity-0');
-            setTimeout(() => modal.classList.add('hidden'), 300);
-        }
-
-        function applyBulkInput() {
-            const text = document.getElementById('bulkTextarea').value;
-            const lines = text.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0);
-            
-            if (lines.length > 0) {
-                items = lines.map((lineText, idx) => ({
-                    text: lineText,
-                    color: COLOR_PALETTE[idx % COLOR_PALETTE.length]
-                }));
-                renderItemList();
-                drawWheel();
-                closeBulkModal();
-            }
-        }
-
         function renderHistory() {
             const container = document.getElementById('historyContainer');
-            if (spinHistory.length === 0) {
-                container.innerHTML = '<span class="text-xs text-slate-500 italic">Chưa có lượt quay nào.</span>';
+            if (history.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-500 italic">Chưa có lượt quay nào.</p>';
                 return;
             }
-
-            container.innerHTML = spinHistory.map(entry => `
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 text-xs text-indigo-300 border border-slate-700/60">
-                    <i class="fa-solid fa-award text-amber-400"></i>
-                    <strong>${escapeHtml(entry.text)}</strong>
-                    <span class="text-[10px] text-slate-500">${entry.time}</span>
-                </span>
+            container.innerHTML = history.map((h, i) => `
+                <div class="flex items-center justify-between text-xs bg-slate-900/40 p-2 rounded-lg">
+                    <span class="text-slate-300 font-medium">#${history.length - i} ${h}</span>
+                    <span class="text-amber-400 font-bold">Trúng</span>
+                </div>
             `).join('');
         }
 
         function clearHistory() {
-            spinHistory = [];
+            history = [];
             renderHistory();
         }
 
-       // Danh sách mặc định ban đầu
-const defaultItems = ['Giải Nhất', 'Giải Nhì', 'Giải Ba', 'May Mắn', 'Chúc Bạn Tóm Được', 'Thêm Lượt'];
-
-// Khi đọc dữ liệu từ LocalStorage:
-let savedItems = JSON.parse(localStorage.getItem('wheel_items'));
-
-// NẾU không có dữ liệu HOẶC mảng rỗng [] -> Dùng lại danh sách mặc định
-if (!savedItems || savedItems.length === 0) {
-    items = [...defaultItems];
-    localStorage.setItem('wheel_items', JSON.stringify(items));
-} else {
-    items = savedItems;
-}
-
-        function escapeHtml(str) {
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        // Bulk Modal Functions
+        function openBulkModal() {
+            document.getElementById('bulkInputText').value = items.join('\n');
+            document.getElementById('bulkModal').classList.remove('hidden');
         }
+
+        function closeBulkModal() {
+            document.getElementById('bulkModal').classList.add('hidden');
+        }
+
+        function saveBulkItems() {
+            const text = document.getElementById('bulkInputText').value;
+            const newItems = text.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+            saveItems(newItems);
+            closeBulkModal();
+        }
+
+        // Initialization
+        window.addEventListener('load', () => {
+            items = loadItems();
+            renderItemList();
+            drawWheel();
+        });
     </script>
 </body>
 </html>

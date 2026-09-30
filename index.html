@@ -769,23 +769,19 @@
             renderHistory();
         }
 
-        // Local Storage Helpers
-        function saveItemsToLocalStorage() {
-            localStorage.setItem('wheel_items_v2', JSON.stringify(items));
-        }
+       // Danh sách mặc định ban đầu
+const defaultItems = ['Giải Nhất', 'Giải Nhì', 'Giải Ba', 'May Mắn', 'Chúc Bạn Tóm Được', 'Thêm Lượt'];
 
-        function loadItemsFromLocalStorage() {
-            const saved = localStorage.getItem('wheel_items_v2');
-            if (saved) {
-                try {
-                    items = JSON.parse(saved);
-                } catch (e) {
-                    resetDefaultItems();
-                }
-            } else {
-                resetDefaultItems();
-            }
-        }
+// Khi đọc dữ liệu từ LocalStorage:
+let savedItems = JSON.parse(localStorage.getItem('wheel_items'));
+
+// NẾU không có dữ liệu HOẶC mảng rỗng [] -> Dùng lại danh sách mặc định
+if (!savedItems || savedItems.length === 0) {
+    items = [...defaultItems];
+    localStorage.setItem('wheel_items', JSON.stringify(items));
+} else {
+    items = savedItems;
+}
 
         function escapeHtml(str) {
             return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
